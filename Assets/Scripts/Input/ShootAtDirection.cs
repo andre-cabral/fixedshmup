@@ -4,14 +4,13 @@ using System.Collections;
 public class ShootAtDirection : MonoBehaviour {
 
 	public GameObject bullet;
+	public float minimumAngle = -90f;
+	public float maximumAngle = 90f;
 	public Transform bulletSpawnPoint;
 
 	void Update () {
 #if UNITY_EDITOR
 		if(Input.GetMouseButtonDown(0)){
-			Debug.Log(ScreenPointToPosition2D.GetZRotation2D(transform.position, transform.position));
-			Debug.Log(ScreenPointToPosition2D.GetZRotation2D(transform.position, new Vector3(transform.position.x+1f,transform.position.y,transform.position.z)));
-			Debug.Log(ScreenPointToPosition2D.GetZRotation2D(transform.position, new Vector3(transform.position.x-1f,transform.position.y,transform.position.z)));
 			ShootToDirection(ScreenPointToPosition2D.GetWorldPosition2D(Input.mousePosition, transform.position.z));
 		}
 #endif
@@ -29,6 +28,13 @@ public class ShootAtDirection : MonoBehaviour {
 	void RotateToDirection(Vector3 direction){
 		Vector3 newRotation = transform.rotation.eulerAngles;
 		newRotation.z = ScreenPointToPosition2D.GetZRotation2D(transform.position, direction);
+
+		if(newRotation.z < minimumAngle){
+			newRotation.z = minimumAngle;
+		}
+		if(newRotation.z > maximumAngle){
+			newRotation.z = maximumAngle;
+		}
 
 		transform.rotation = Quaternion.Euler(newRotation);
 	}
